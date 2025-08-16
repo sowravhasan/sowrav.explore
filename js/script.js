@@ -1,101 +1,105 @@
-// DOM Content Loaded
+// Optimized Explore With Sowrav - Main JavaScript File
+console.log("🌟 Explore With Sowrav - Website Loading...");
+
+// Initialize everything when DOM is loaded
 document.addEventListener("DOMContentLoaded", function () {
-  // Initialize all functionality
+  console.log("📦 DOM Content Loaded - Initializing features...");
+
+  // Initialize core features
   initNavigation();
-  initGallery();
-  initNewsletterForm();
   initScrollAnimations();
-  initCategoryCards();
-  initVideoLazyLoading();
   initAnimatedCounters();
-  initParallaxEffects();
-  // initTypingEffect(); // Disabled typing animation
+  initNewsletterForm();
+  initGalleryFilters();
+  initCategoryCards();
+  initLazyLoading();
+
+  console.log("✅ All features initialized successfully!");
 });
 
-// Enhanced Navigation functionality
+// Navigation functionality
 function initNavigation() {
+  console.log("🧭 Initializing navigation...");
+
   const navToggle = document.getElementById("nav-toggle");
   const navMenu = document.getElementById("nav-menu");
   const navLinks = document.querySelectorAll(".nav-link");
   const navbar = document.querySelector(".navbar");
 
   // Mobile menu toggle
-  if (navToggle) {
+  if (navToggle && navMenu) {
     navToggle.addEventListener("click", () => {
       navMenu.classList.toggle("active");
       navToggle.classList.toggle("active");
+      console.log("📱 Mobile menu toggled");
+    });
+
+    // Close mobile menu when clicking on links
+    navLinks.forEach((link) => {
+      link.addEventListener("click", () => {
+        navMenu.classList.remove("active");
+        navToggle.classList.remove("active");
+      });
     });
   }
 
-  // Close mobile menu when clicking on links
-  navLinks.forEach((link) => {
-    link.addEventListener("click", () => {
-      navMenu.classList.remove("active");
-      navToggle.classList.remove("active");
-    });
-  });
+  // Navbar scroll effect
+  if (navbar) {
+    window.addEventListener(
+      "scroll",
+      debounce(() => {
+        if (window.scrollY > 100) {
+          navbar.classList.add("scrolled");
+        } else {
+          navbar.classList.remove("scrolled");
+        }
+      }, 10)
+    );
+  }
 
-  // Enhanced navbar scroll effect
-  window.addEventListener(
-    "scroll",
-    debounce(() => {
-      if (window.scrollY > 100) {
-        navbar.classList.add("scrolled");
-      } else {
-        navbar.classList.remove("scrolled");
+  // Active navigation link highlighting based on scroll position
+  function updateActiveNavLink() {
+    const sections = document.querySelectorAll("section[id]");
+    let current = "home";
+
+    sections.forEach((section) => {
+      const sectionTop = section.offsetTop;
+      const sectionHeight = section.clientHeight;
+
+      // Check if current scroll position is within this section
+      if (window.scrollY >= sectionTop - 150) {
+        current = section.getAttribute("id");
       }
-    }, 10)
-  );
+    });
 
-  // Active nav link highlighting for single-page sections
-  const sections = document.querySelectorAll("section[id]");
+    // Update active nav link
+    navLinks.forEach((link) => {
+      link.classList.remove("active");
+      const href = link.getAttribute("href");
 
-  window.addEventListener(
-    "scroll",
-    debounce(() => {
-      let current = "home"; // Default to home
+      // Check if this link corresponds to current section
+      if (href === `#${current}`) {
+        link.classList.add("active");
+      }
+    });
+  }
 
-      sections.forEach((section) => {
-        const sectionTop = section.offsetTop;
-        const sectionHeight = section.clientHeight;
+  // Add scroll listener for active nav updates
+  window.addEventListener("scroll", debounce(updateActiveNavLink, 50));
 
-        // Check if current scroll position is within this section
-        if (window.scrollY >= sectionTop - 150) {
-          current = section.getAttribute("id");
-        }
-      });
-
-      // Update active nav link
-      navLinks.forEach((link) => {
-        link.classList.remove("active");
-        const href = link.getAttribute("href");
-
-        // Check if this link corresponds to current section
-        if (
-          href === `#${current}` ||
-          (current === "home" && href === "#home")
-        ) {
-          link.classList.add("active");
-        }
-      });
-    }, 50)
-  );
+  // Initialize active state on page load
+  updateActiveNavLink();
 
   // Smooth scroll for anchor links
   navLinks.forEach((link) => {
     const href = link.getAttribute("href");
-
-    // Only add smooth scroll for anchor links (starting with #)
-    if (href.startsWith("#")) {
+    if (href && href.startsWith("#")) {
       link.addEventListener("click", (e) => {
         e.preventDefault();
-
         const targetId = href.substring(1);
         const targetSection = document.getElementById(targetId);
-
         if (targetSection) {
-          const offsetTop = targetSection.offsetTop - 80; // Account for fixed navbar
-
+          const offsetTop = targetSection.offsetTop - 80;
           window.scrollTo({
             top: offsetTop,
             behavior: "smooth",
@@ -104,11 +108,20 @@ function initNavigation() {
       });
     }
   });
+
+  console.log("✅ Navigation initialized");
 }
 
-// Animated Counters
+// Animated counters for stats
 function initAnimatedCounters() {
+  console.log("🔢 Initializing animated counters...");
+
   const counters = document.querySelectorAll(".stat-number[data-count]");
+
+  if (counters.length === 0) {
+    console.log("ℹ️ No counters found");
+    return;
+  }
 
   const counterObserver = new IntersectionObserver(
     (entries) => {
@@ -116,21 +129,7 @@ function initAnimatedCounters() {
         if (entry.isIntersecting) {
           const counter = entry.target;
           const target = parseInt(counter.getAttribute("data-count"));
-          const duration = 2000; // 2 seconds
-          const increment = target / (duration / 16); // 60fps
-          let current = 0;
-
-          const updateCounter = () => {
-            if (current < target) {
-              current += increment;
-              counter.textContent = Math.ceil(current);
-              requestAnimationFrame(updateCounter);
-            } else {
-              counter.textContent = target;
-            }
-          };
-
-          updateCounter();
+          animateCounter(counter, target);
           counterObserver.unobserve(counter);
         }
       });
@@ -141,375 +140,122 @@ function initAnimatedCounters() {
   counters.forEach((counter) => {
     counterObserver.observe(counter);
   });
+
+  console.log(`✅ ${counters.length} counters initialized`);
 }
 
-// Parallax Effects
-function initParallaxEffects() {
-  const parallaxElements = document.querySelectorAll(".parallax-element");
+function animateCounter(element, target) {
+  const duration = 2500; // Longer duration for smoother animation
+  const start = performance.now();
 
-  window.addEventListener(
-    "scroll",
-    debounce(() => {
-      const scrolled = window.pageYOffset;
+  function update(currentTime) {
+    const elapsed = currentTime - start;
+    const progress = Math.min(elapsed / duration, 1);
 
-      parallaxElements.forEach((element) => {
-        const speed = element.dataset.speed || 0.5;
-        const yPos = -(scrolled * speed);
-        element.style.transform = `translateY(${yPos}px)`;
+    // Smooth easing function (ease-out-cubic)
+    const easeOutCubic = 1 - Math.pow(1 - progress, 3);
+    const current = Math.floor(target * easeOutCubic);
+
+    element.textContent = current;
+
+    if (progress < 1) {
+      requestAnimationFrame(update);
+    } else {
+      element.textContent = target;
+    }
+  }
+
+  requestAnimationFrame(update);
+}
+
+// Gallery filters functionality
+function initGalleryFilters() {
+  console.log("🎨 Initializing gallery filters...");
+
+  const filterButtons = document.querySelectorAll(".filter-btn");
+  const galleryItems = document.querySelectorAll(".gallery-item");
+
+  if (filterButtons.length === 0 || galleryItems.length === 0) {
+    console.log("ℹ️ Gallery filters not found on this page");
+    return;
+  }
+
+  // Ensure all items are visible initially
+  galleryItems.forEach((item) => {
+    item.style.display = "block";
+    item.style.opacity = "1";
+    item.style.transform = "scale(1)";
+  });
+
+  filterButtons.forEach((button) => {
+    button.addEventListener("click", (e) => {
+      e.preventDefault();
+
+      // Update active button
+      filterButtons.forEach((btn) => btn.classList.remove("active"));
+      button.classList.add("active");
+
+      const filterValue = button.getAttribute("data-filter");
+      console.log(`🎯 Filtering gallery by: ${filterValue}`);
+
+      // Filter items with smooth animation
+      galleryItems.forEach((item, index) => {
+        const itemCategory = item.getAttribute("data-category");
+        const shouldShow =
+          filterValue === "all" || itemCategory === filterValue;
+
+        if (shouldShow) {
+          item.style.display = "block";
+          // Add small delay for staggered animation
+          setTimeout(() => {
+            item.style.opacity = "1";
+            item.style.transform = "scale(1)";
+          }, index * 50);
+        } else {
+          item.style.opacity = "0";
+          item.style.transform = "scale(0.8)";
+          setTimeout(() => {
+            item.style.display = "none";
+          }, 300);
+        }
       });
-    }, 10)
+    });
+  });
+
+  // Initialize lightbox for gallery items
+  initGalleryLightbox();
+
+  console.log(
+    `✅ Gallery filters initialized with ${galleryItems.length} items`
   );
 }
 
-// Typing Effect for Hero Title
-function initTypingEffect() {
-  const heroTitle = document.querySelector(".hero-title");
-  if (!heroTitle) return;
-
-  const text = heroTitle.textContent;
-  heroTitle.textContent = "";
-  heroTitle.style.opacity = "1";
-
-  let i = 0;
-  const typeWriter = () => {
-    if (i < text.length) {
-      heroTitle.textContent += text.charAt(i);
-      i++;
-      setTimeout(typeWriter, 100);
-    }
-  };
-
-  // Start typing effect after page load
-  setTimeout(typeWriter, 1000);
-}
-
-// Gallery functionality - Complete rewrite for reliable filtering
-function initGallery() {
-  console.log('🎨 Gallery: Starting initialization...');
-  
-  // Use a longer delay to ensure everything is loaded
-  setTimeout(() => {
-    try {
-      // Get DOM elements
-      const galleryContainer = document.getElementById("gallery-main");
-      const filterButtons = document.querySelectorAll(".filter-btn");
-      const galleryItems = document.querySelectorAll(".gallery-item");
-
-      // Validation
-      if (!galleryContainer) {
-        console.error('❌ Gallery container not found!');
-        return;
-      }
-      
-      if (filterButtons.length === 0) {
-        console.error('❌ No filter buttons found!');
-        return;
-      }
-      
-      if (galleryItems.length === 0) {
-        console.error('❌ No gallery items found!');
-        return;
-      }
-
-      console.log('✅ Elements found:');
-      console.log(`   Gallery container: ${galleryContainer.id}`);
-      console.log(`   Filter buttons: ${filterButtons.length}`);
-      console.log(`   Gallery items: ${galleryItems.length}`);
-
-      // Log categories for debugging
-      const foundCategories = new Set();
-      galleryItems.forEach((item, index) => {
-        const category = item.getAttribute("data-category");
-        console.log(`   Item ${index}: category="${category}"`);
-        if (category) foundCategories.add(category);
-      });
-      console.log(`   Available categories: ${Array.from(foundCategories).join(', ')}`);
-
-      // Set up filtering
-      filterButtons.forEach((button, buttonIndex) => {
-        const filterValue = button.getAttribute("data-filter");
-        console.log(`🔘 Setting up button ${buttonIndex}: "${filterValue}"`);
-        
-        // Remove any existing event listeners
-        button.replaceWith(button.cloneNode(true));
-      });
-
-      // Re-get buttons after cloning (to remove old listeners)
-      const cleanFilterButtons = document.querySelectorAll(".filter-btn");
-      
-      cleanFilterButtons.forEach((button) => {
-        button.addEventListener('click', function(event) {
-          event.preventDefault();
-          event.stopPropagation();
-          
-          const filterValue = this.getAttribute("data-filter");
-          console.log(`🎯 Filter clicked: "${filterValue}"`);
-
-          // Update button states
-          cleanFilterButtons.forEach(btn => {
-            btn.classList.remove("active");
-            console.log(`   Removed active from: ${btn.getAttribute("data-filter")}`);
-          });
-          
-          this.classList.add("active");
-          console.log(`   ✅ Added active to: ${filterValue}`);
-
-          // Filter items
-          let visibleCount = 0;
-          let hiddenCount = 0;
-
-          galleryItems.forEach((item, itemIndex) => {
-            const itemCategory = item.getAttribute("data-category");
-            const shouldShow = (filterValue === "all") || (itemCategory === filterValue);
-            
-            if (shouldShow) {
-              // Show item
-              item.style.display = "block";
-              item.classList.remove("hidden");
-              visibleCount++;
-              console.log(`   👁️ Showing item ${itemIndex} (category: ${itemCategory})`);
-            } else {
-              // Hide item
-              item.style.display = "none";
-              item.classList.add("hidden");
-              hiddenCount++;
-              console.log(`   🙈 Hiding item ${itemIndex} (category: ${itemCategory})`);
-            }
-          });
-
-          console.log(`📊 Result: ${visibleCount} shown, ${hiddenCount} hidden`);
-          
-          // Update container class for CSS styling
-          if (filterValue === "all") {
-            galleryContainer.classList.remove("filtered");
-          } else {
-            galleryContainer.classList.add("filtered");
-          }
-        });
-      });
-
-      // Initialize with "All" filter
-      const allButton = document.querySelector('.filter-btn[data-filter="all"]');
-      if (allButton) {
-        console.log('🔄 Triggering initial "All" filter...');
-        allButton.click();
-      }
-
-      // Set up lightbox functionality
-      setupGalleryLightbox();
-
-      console.log('✅ Gallery initialization completed successfully!');
-      
-    } catch (error) {
-      console.error('❌ Gallery initialization error:', error);
-    }
-  }, 500); // Increased delay
-}
-
-// Separate lightbox function
-function setupGalleryLightbox() {
+// Gallery lightbox functionality
+function initGalleryLightbox() {
   const galleryItems = document.querySelectorAll(".gallery-item");
-  
+
   galleryItems.forEach((item) => {
-    // Click on view button
-    const viewBtn = item.querySelector(".gallery-view");
-    if (viewBtn) {
-      viewBtn.addEventListener("click", (e) => {
-        e.stopPropagation();
-        const imageSrc = viewBtn.getAttribute("data-image");
-        if (imageSrc) {
-          console.log(`🖼️ Opening lightbox: ${imageSrc}`);
-          openLightbox(imageSrc);
-        }
-      });
-    }
-
-    // Click on entire item
     item.addEventListener("click", () => {
       const img = item.querySelector("img");
       if (img) {
-        console.log(`🖼️ Opening lightbox from item: ${img.src}`);
-        openLightbox(img.src);
-      }
-    });
-  });
-}
-}
-
-  // Gallery lightbox functionality
-  const viewBtns = document.querySelectorAll(".gallery-view");
-  viewBtns.forEach(btn => {
-    btn.addEventListener("click", (e) => {
-      e.stopPropagation();
-      const imageSrc = btn.getAttribute("data-image");
-      openLightbox(imageSrc);
-    });
-  });
-
-  // Click on gallery item to open lightbox
-  galleryItems.forEach(item => {
-    item.addEventListener("click", () => {
-      const img = item.querySelector("img");
-      if (img) {
-        openLightbox(img.src);
+        openLightbox(img.src, img.alt);
       }
     });
   });
 }
 
-// Lightbox functionality
-function openLightbox(imageSrc) {
-  // Create lightbox if it doesn't exist
-  let lightbox = document.getElementById("gallery-lightbox");
-  if (!lightbox) {
-    lightbox = document.createElement("div");
-    lightbox.id = "gallery-lightbox";
-    lightbox.innerHTML = `
-      <div class="lightbox-overlay">
-        <div class="lightbox-content">
-          <img src="" alt="Gallery Image" id="lightbox-image">
-          <button class="lightbox-close">&times;</button>
-        </div>
-      </div>
-    `;
-    document.body.appendChild(lightbox);
-
-    // Add lightbox styles
-    const style = document.createElement("style");
-    style.textContent = `
-      #gallery-lightbox {
-        position: fixed;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        z-index: 10000;
-        display: none;
-      }
-      .lightbox-overlay {
-        width: 100%;
-        height: 100%;
-        background: rgba(0, 0, 0, 0.9);
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        padding: 20px;
-      }
-      .lightbox-content {
-        position: relative;
-        max-width: 90%;
-        max-height: 90%;
-      }
-      #lightbox-image {
-        max-width: 100%;
-        max-height: 100%;
-        object-fit: contain;
-        border-radius: 10px;
-      }
-      .lightbox-close {
-        position: absolute;
-        top: -10px;
-        right: -10px;
-        background: white;
-        border: none;
-        width: 40px;
-        height: 40px;
-        border-radius: 50%;
-        font-size: 24px;
-        cursor: pointer;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        box-shadow: 0 2px 10px rgba(0,0,0,0.3);
-      }
-      .lightbox-close:hover {
-        background: #f0f0f0;
-      }
-    `;
-    document.head.appendChild(style);
-
-    // Close lightbox events
-    lightbox.querySelector(".lightbox-close").addEventListener("click", closeLightbox);
-    lightbox.querySelector(".lightbox-overlay").addEventListener("click", (e) => {
-      if (e.target === e.currentTarget) closeLightbox();
-    });
-    
-    // Close on escape key
-    document.addEventListener("keydown", (e) => {
-      if (e.key === "Escape" && lightbox.style.display === "block") {
-        closeLightbox();
-      }
-    });
-  }
-
-  // Set image and show lightbox
-  const lightboxImage = lightbox.querySelector("#lightbox-image");
-  lightboxImage.src = imageSrc;
-  lightbox.style.display = "block";
-  document.body.style.overflow = "hidden";
-}
-
-function closeLightbox() {
-  const lightbox = document.getElementById("gallery-lightbox");
-  if (lightbox) {
-    lightbox.style.display = "none";
-    document.body.style.overflow = "auto";
-  }
-}
-                    <p>${item.caption}</p>
-                </div>
-            `;
-
-      // Add click event for lightbox
-      galleryItem.addEventListener("click", () => {
-        openLightbox(item);
-      });
-
-      galleryGrid.appendChild(galleryItem);
-    });
-  }
-
-  // Filter functionality
-  filterBtns.forEach((btn) => {
-    btn.addEventListener("click", () => {
-      // Remove active class from all buttons
-      filterBtns.forEach((b) => b.classList.remove("active"));
-      // Add active class to clicked button
-      btn.classList.add("active");
-
-      const filter = btn.getAttribute("data-filter");
-      let filteredItems;
-
-      if (filter === "all") {
-        filteredItems = galleryData;
-      } else {
-        filteredItems = galleryData.filter((item) => item.category === filter);
-      }
-
-      renderGallery(filteredItems);
-    });
-  });
-
-  // Initial render
-  renderGallery(galleryData.slice(0, 8)); // Show first 8 items on homepage
-}
-
-// Lightbox functionality
-function openLightbox(item) {
-  // Create lightbox overlay
+function openLightbox(imageSrc, imageAlt) {
+  // Create lightbox
   const lightbox = document.createElement("div");
-  lightbox.className = "lightbox-overlay";
+  lightbox.className = "lightbox";
   lightbox.innerHTML = `
         <div class="lightbox-content">
-            <span class="lightbox-close">&times;</span>
-            <img src="${item.image}" alt="${item.caption}">
-            <div class="lightbox-caption">
-                <p>${item.caption}</p>
-            </div>
+            <img src="${imageSrc}" alt="${imageAlt}">
+            <button class="lightbox-close">&times;</button>
         </div>
     `;
 
-  // Add lightbox styles
+  // Add styles
   lightbox.style.cssText = `
         position: fixed;
         top: 0;
@@ -521,6 +267,8 @@ function openLightbox(item) {
         align-items: center;
         justify-content: center;
         z-index: 10000;
+        opacity: 0;
+        transition: opacity 0.3s ease;
     `;
 
   const content = lightbox.querySelector(".lightbox-content");
@@ -528,81 +276,231 @@ function openLightbox(item) {
         position: relative;
         max-width: 90%;
         max-height: 90%;
-        text-align: center;
     `;
 
   const img = lightbox.querySelector("img");
   img.style.cssText = `
         max-width: 100%;
-        max-height: 80vh;
+        max-height: 100%;
         object-fit: contain;
+        border-radius: 10px;
     `;
 
-  const close = lightbox.querySelector(".lightbox-close");
-  close.style.cssText = `
+  const closeBtn = lightbox.querySelector(".lightbox-close");
+  closeBtn.style.cssText = `
         position: absolute;
-        top: -40px;
-        right: 0;
-        font-size: 2rem;
-        color: white;
+        top: -15px;
+        right: -15px;
+        background: white;
+        border: none;
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        font-size: 20px;
         cursor: pointer;
-        font-weight: bold;
-    `;
-
-  const caption = lightbox.querySelector(".lightbox-caption");
-  caption.style.cssText = `
-        color: white;
-        margin-top: 1rem;
-        font-size: 1.1rem;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        box-shadow: 0 2px 10px rgba(0,0,0,0.3);
     `;
 
   // Close functionality
   const closeLightbox = () => {
-    document.body.removeChild(lightbox);
+    lightbox.style.opacity = "0";
+    setTimeout(() => {
+      if (document.body.contains(lightbox)) {
+        document.body.removeChild(lightbox);
+      }
+    }, 300);
     document.body.style.overflow = "auto";
   };
 
-  close.addEventListener("click", closeLightbox);
+  closeBtn.addEventListener("click", closeLightbox);
   lightbox.addEventListener("click", (e) => {
-    if (e.target === lightbox) {
-      closeLightbox();
-    }
+    if (e.target === lightbox) closeLightbox();
   });
 
-  // Prevent body scroll
-  document.body.style.overflow = "hidden";
+  document.addEventListener("keydown", function (e) {
+    if (e.key === "Escape") closeLightbox();
+  });
+
+  // Show lightbox
   document.body.appendChild(lightbox);
+  document.body.style.overflow = "hidden";
+
+  // Animate in
+  setTimeout(() => {
+    lightbox.style.opacity = "1";
+  }, 10);
 }
 
 // Newsletter form functionality
 function initNewsletterForm() {
+  console.log("📧 Initializing newsletter form...");
+
   const newsletterForm = document.getElementById("newsletter-form");
 
-  if (newsletterForm) {
-    newsletterForm.addEventListener("submit", (e) => {
-      e.preventDefault();
+  if (!newsletterForm) {
+    console.log("ℹ️ Newsletter form not found");
+    return;
+  }
 
-      const email = newsletterForm.querySelector('input[type="email"]').value;
-      const submitBtn = newsletterForm.querySelector("button");
-      const originalText = submitBtn.innerHTML;
+  newsletterForm.addEventListener("submit", (e) => {
+    e.preventDefault();
 
-      // Show loading state
-      submitBtn.innerHTML = '<span class="loading"></span> Subscribing...';
-      submitBtn.disabled = true;
+    const email = newsletterForm.querySelector('input[type="email"]').value;
+    const submitBtn = newsletterForm.querySelector("button");
+    const originalText = submitBtn.innerHTML;
 
-      // Simulate API call
-      setTimeout(() => {
-        // Show success message
-        showNotification(
-          "Thank you for subscribing! Check your email for confirmation.",
-          "success"
-        );
+    // Show loading state
+    submitBtn.innerHTML = "📤 Subscribing...";
+    submitBtn.disabled = true;
 
-        // Reset form
-        newsletterForm.reset();
-        submitBtn.innerHTML = originalText;
-        submitBtn.disabled = false;
-      }, 2000);
+    // Simulate subscription (replace with actual API call)
+    setTimeout(() => {
+      showNotification("Thank you for subscribing! 🎉", "success");
+      newsletterForm.reset();
+      submitBtn.innerHTML = originalText;
+      submitBtn.disabled = false;
+    }, 2000);
+  });
+
+  console.log("✅ Newsletter form initialized");
+}
+
+// Category cards interaction
+function initCategoryCards() {
+  console.log("🏷️ Initializing category cards...");
+
+  const categoryCards = document.querySelectorAll(".category-card");
+
+  if (categoryCards.length === 0) {
+    console.log("ℹ️ No category cards found");
+    return;
+  }
+
+  categoryCards.forEach((card) => {
+    card.addEventListener("click", () => {
+      const category = card.getAttribute("data-category");
+      console.log(`📂 Category card clicked: ${category}`);
+
+      // Scroll to gallery and filter
+      const gallerySection = document.getElementById("gallery");
+      if (gallerySection) {
+        gallerySection.scrollIntoView({ behavior: "smooth" });
+
+        // Filter gallery after scrolling
+        setTimeout(() => {
+          const filterBtn = document.querySelector(
+            `[data-filter="${category}"]`
+          );
+          if (filterBtn) {
+            filterBtn.click();
+          }
+        }, 500);
+      }
+    });
+  });
+
+  console.log(`✅ ${categoryCards.length} category cards initialized`);
+}
+
+// Scroll animations
+function initScrollAnimations() {
+  console.log("🎬 Initializing scroll animations...");
+
+  const animatedElements = document.querySelectorAll(
+    ".category-card, .video-card, .social-card, .gallery-item, .expertise-card"
+  );
+
+  if (animatedElements.length === 0) {
+    console.log("ℹ️ No animated elements found");
+    return;
+  }
+
+  const observer = new IntersectionObserver(
+    (entries) => {
+      entries.forEach((entry) => {
+        if (entry.isIntersecting) {
+          entry.target.style.opacity = "1";
+          entry.target.style.transform = "translateY(0)";
+        }
+      });
+    },
+    {
+      threshold: 0.1,
+      rootMargin: "0px 0px -50px 0px",
+    }
+  );
+
+  animatedElements.forEach((el) => {
+    el.style.opacity = "0";
+    el.style.transform = "translateY(30px)";
+    el.style.transition = "opacity 0.6s ease, transform 0.6s ease";
+    observer.observe(el);
+  });
+
+  console.log(
+    `✅ ${animatedElements.length} elements set for scroll animation`
+  );
+}
+
+// Lazy loading for images
+function initLazyLoading() {
+  console.log("🖼️ Initializing lazy loading...");
+
+  const images = document.querySelectorAll('img[loading="lazy"]');
+
+  if (images.length === 0) {
+    console.log("ℹ️ No lazy loading images found");
+    return;
+  }
+
+  if ("IntersectionObserver" in window) {
+    const imageObserver = new IntersectionObserver((entries) => {
+      entries.forEach((entry) => {
+        if (entry.isIntersecting) {
+          const img = entry.target;
+
+          img.onload = () => {
+            img.style.opacity = "1";
+            img.classList.add("loaded");
+          };
+
+          img.onerror = () => {
+            img.style.opacity = "0.5";
+            img.alt = "Image not available";
+            console.log(`⚠️ Failed to load image: ${img.src}`);
+          };
+
+          if (img.dataset.src) {
+            img.src = img.dataset.src;
+            img.removeAttribute("data-src");
+          } else if (img.src) {
+            // For images that already have src, just ensure they're visible
+            img.style.opacity = "1";
+            img.classList.add("loaded");
+          }
+
+          imageObserver.unobserve(img);
+        }
+      });
+    });
+
+    images.forEach((img) => {
+      imageObserver.observe(img);
+      // If image is already loaded, show it immediately
+      if (img.complete && img.naturalWidth > 0) {
+        img.style.opacity = "1";
+        img.classList.add("loaded");
+      }
+    });
+    console.log(`✅ ${images.length} images set for lazy loading`);
+  } else {
+    // Fallback for browsers without IntersectionObserver
+    images.forEach((img) => {
+      img.style.opacity = "1";
+      img.classList.add("loaded");
     });
   }
 }
@@ -610,14 +508,14 @@ function initNewsletterForm() {
 // Notification system
 function showNotification(message, type = "info") {
   const notification = document.createElement("div");
-  notification.className = `notification notification-${type}`;
   notification.textContent = message;
 
+  const bgColor = type === "success" ? "#2ECC71" : "#1FA2FF";
   notification.style.cssText = `
         position: fixed;
         top: 100px;
         right: 20px;
-        background: ${type === "success" ? "#2ECC71" : "#1FA2FF"};
+        background: ${bgColor};
         color: white;
         padding: 1rem 1.5rem;
         border-radius: 8px;
@@ -626,6 +524,7 @@ function showNotification(message, type = "info") {
         transition: transform 0.3s ease;
         box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
         max-width: 300px;
+        font-weight: 500;
     `;
 
   document.body.appendChild(notification);
@@ -646,109 +545,7 @@ function showNotification(message, type = "info") {
   }, 4000);
 }
 
-// Scroll animations
-function initScrollAnimations() {
-  const observerOptions = {
-    threshold: 0.1,
-    rootMargin: "0px 0px -50px 0px",
-  };
-
-  const observer = new IntersectionObserver((entries) => {
-    entries.forEach((entry) => {
-      if (entry.isIntersecting) {
-        entry.target.style.opacity = "1";
-        entry.target.style.transform = "translateY(0)";
-      }
-    });
-  }, observerOptions);
-
-  // Observe elements that should animate
-  const animatedElements = document.querySelectorAll(
-    ".category-card, .video-card, .social-card, .gallery-item"
-  );
-
-  animatedElements.forEach((el) => {
-    el.style.opacity = "0";
-    el.style.transform = "translateY(30px)";
-    el.style.transition = "opacity 0.6s ease, transform 0.6s ease";
-    observer.observe(el);
-  });
-}
-
-// Category cards interaction
-function initCategoryCards() {
-  const categoryCards = document.querySelectorAll(".category-card");
-
-  categoryCards.forEach((card) => {
-    card.addEventListener("click", () => {
-      const category = card.getAttribute("data-category");
-      // Navigate to gallery page with filter
-      window.location.href = `gallery.html?filter=${category}`;
-    });
-  });
-}
-
-// Video lazy loading
-function initVideoLazyLoading() {
-  const videoCards = document.querySelectorAll(".video-card");
-
-  const videoObserver = new IntersectionObserver((entries) => {
-    entries.forEach((entry) => {
-      if (entry.isIntersecting) {
-        const iframe = entry.target.querySelector("iframe");
-        if (iframe && !iframe.src) {
-          // Load video when it comes into view
-          const videoId = iframe.getAttribute("data-video-id");
-          if (videoId) {
-            iframe.src = `https://www.youtube.com/embed/${videoId}`;
-          }
-        }
-      }
-    });
-  });
-
-  videoCards.forEach((card) => {
-    videoObserver.observe(card);
-  });
-}
-
-// Smooth scrolling for anchor links
-document.querySelectorAll('a[href^="#"]').forEach((anchor) => {
-  anchor.addEventListener("click", function (e) {
-    e.preventDefault();
-    const target = document.querySelector(this.getAttribute("href"));
-    if (target) {
-      target.scrollIntoView({
-        behavior: "smooth",
-        block: "start",
-      });
-    }
-  });
-});
-
-// Social media feed integration (placeholder functions)
-function loadInstagramFeed() {
-  // This would integrate with Instagram Basic Display API
-  console.log("Loading Instagram feed...");
-}
-
-function loadTikTokFeed() {
-  // This would integrate with TikTok API
-  console.log("Loading TikTok feed...");
-}
-
-function loadFacebookFeed() {
-  // This would integrate with Facebook Graph API
-  console.log("Loading Facebook feed...");
-}
-
-// YouTube API integration (placeholder)
-function loadYouTubeVideos() {
-  // This would integrate with YouTube Data API v3
-  console.log("Loading YouTube videos...");
-}
-
-// Utility functions
+// Utility function - debounce for performance
 function debounce(func, wait) {
   let timeout;
   return function executedFunction(...args) {
@@ -761,38 +558,13 @@ function debounce(func, wait) {
   };
 }
 
-// Performance optimization
-function lazyLoadImages() {
-  const images = document.querySelectorAll('img[loading="lazy"]');
-
-  if ("IntersectionObserver" in window) {
-    const imageObserver = new IntersectionObserver((entries) => {
-      entries.forEach((entry) => {
-        if (entry.isIntersecting) {
-          const img = entry.target;
-          if (img.dataset.src) {
-            img.src = img.dataset.src;
-            img.removeAttribute("data-src");
-          }
-          imageObserver.unobserve(img);
-        }
-      });
-    });
-
-    images.forEach((img) => imageObserver.observe(img));
-  }
-}
-
-// Initialize lazy loading
-lazyLoadImages();
-
 // Error handling for missing images
 document.addEventListener(
   "error",
   function (e) {
     if (e.target.tagName === "IMG") {
-      e.target.src = "assets/images/placeholder.jpg";
-      e.target.alt = "Image not available";
+      e.target.style.display = "none";
+      console.log(`⚠️ Image failed to load: ${e.target.src}`);
     }
   },
   true
@@ -803,16 +575,10 @@ console.log(`
 🌟 Welcome to Explore With Sowrav!
 🎬 Follow the journey: youtube.com/@sowrav.explore
 📸 Daily adventures: instagram.com/sowrav.explore
-🚀 Website built with modern web technologies
+🚀 Website optimized and ready!
 `);
 
-// Export functions for potential module use
-if (typeof module !== "undefined" && module.exports) {
-  module.exports = {
-    initNavigation,
-    initGallery,
-    initNewsletterForm,
-    showNotification,
-    openLightbox,
-  };
-}
+// Performance monitoring
+window.addEventListener("load", () => {
+  console.log("🚀 Page fully loaded!");
+});

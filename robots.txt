@@ -1,0 +1,44 @@
+# Robots.txt for Explore With Sowrav
+# https://explorewithsowrav.netlify.app/
+
+User-agent: *
+Allow: /
+
+# Important pages
+Allow: /index.html
+Allow: /css/
+Allow: /js/
+Allow: /images/
+Allow: /assets/
+
+# Sitemap location
+Sitemap: https://explorewithsowrav.netlify.app/sitemap.xml
+
+# Crawl delay for polite crawling
+Crawl-delay: 1
+
+# Special instructions for major search engines
+User-agent: Googlebot
+Allow: /
+Crawl-delay: 0
+
+User-agent: Bingbot
+Allow: /
+Crawl-delay: 1
+
+User-agent: Slurp
+Allow: /
+Crawl-delay: 1
+
+# Block common unwanted bots
+User-agent: AhrefsBot
+Disallow: /
+
+User-agent: MJ12bot
+Disallow: /
+
+User-agent: DotBot
+Disallow: /
+
+# Additional optimization
+Host: https://explorewithsowrav.netlify.app

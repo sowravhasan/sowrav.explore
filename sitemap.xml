@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
+    xmlns:image="http://www.google.com/schemas/sitemap-image/1.1"
+    xmlns:video="http://www.google.com/schemas/sitemap-video/1.1">
+
+    <!-- Homepage -->
+    <url>
+        <loc>https://explorewithsowrav.netlify.app/</loc>
+        <lastmod>2025-08-16</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>1.0</priority>
+        <image:image>
+            <image:loc>https://explorewithsowrav.netlify.app/images/headshot.jpg</image:loc>
+            <image:title>Roman Hasan Sourab (Sowrav) - Travel Content Creator</image:title>
+            <image:caption>Professional headshot of Sowrav, travel and lifestyle content creator from Bangladesh</image:caption>
+        </image:image>
+        <image:image>
+            <image:loc>https://explorewithsowrav.netlify.app/images/gallery/travel.jpg</image:loc>
+            <image:title>Travel Photography by Sowrav</image:title>
+            <image:caption>Stunning travel photography capturing adventures around the world</image:caption>
+        </image:image>
+        <image:image>
+            <image:loc>https://explorewithsowrav.netlify.app/images/gallery/food.jpg</image:loc>
+            <image:title>Food Photography by Sowrav</image:title>
+            <image:caption>Delicious food photography and culinary experiences</image:caption>
+        </image:image>
+        <image:image>
+            <image:loc>https://explorewithsowrav.netlify.app/images/gallery/photography.jpg</image:loc>
+            <image:title>Professional Photography Portfolio</image:title>
+            <image:caption>Professional photography showcasing various styles and techniques</image:caption>
+        </image:image>
+        <image:image>
+            <image:loc>https://explorewithsowrav.netlify.app/images/gallery/cinematorgraphy.jpg</image:loc>
+            <image:title>Cinematography Work by Sowrav</image:title>
+            <image:caption>Cinematic video production and storytelling expertise</image:caption>
+        </image:image>
+        <image:image>
+            <image:loc>https://explorewithsowrav.netlify.app/images/gallery/moto.jpg</image:loc>
+            <image:title>Motorcycle Adventure Content</image:title>
+            <image:caption>Motorcycle travel adventures and moto vlogging content</image:caption>
+        </image:image>
+        <image:image>
+            <image:loc>https://explorewithsowrav.netlify.app/images/gallery/lifestyle.jpg</image:loc>
+            <image:title>Lifestyle Content Creation</image:title>
+            <image:caption>Lifestyle photography and content creation inspiration</image:caption>
+        </image:image>
+        <image:image>
+            <image:loc>https://explorewithsowrav.netlify.app/images/gallery/nature.jpg</image:loc>
+            <image:title>Nature Photography Portfolio</image:title>
+            <image:caption>Beautiful nature photography and landscape captures</image:caption>
+        </image:image>
+        <image:image>
+            <image:loc>https://explorewithsowrav.netlify.app/images/gallery/travel-blogger.jpg</image:loc>
+            <image:title>Travel Blogging Adventures</image:title>
+            <image:caption>Travel blogging content and destination guides</image:caption>
+        </image:image>
+    </url>
+
+    <!-- About Section -->
+    <url>
+        <loc>https://explorewithsowrav.netlify.app/#about</loc>
+        <lastmod>2025-08-16</lastmod>
+        <changefreq>monthly</changefreq>
+        <priority>0.9</priority>
+    </url>
+
+    <!-- Gallery Section -->
+    <url>
+        <loc>https://explorewithsowrav.netlify.app/#gallery</loc>
+        <lastmod>2025-08-16</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.8</priority>
+    </url>
+
+    <!-- Videos Section -->
+    <url>
+        <loc>https://explorewithsowrav.netlify.app/#videos</loc>
+        <lastmod>2025-08-16</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.8</priority>
+    </url>
+
+    <!-- Contact Section -->
+    <url>
+        <loc>https://explorewithsowrav.netlify.app/#contact</loc>
+        <lastmod>2025-08-16</lastmod>
+        <changefreq>monthly</changefreq>
+        <priority>0.7</priority>
+    </url>
+
+</urlset>
